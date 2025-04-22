@@ -27,7 +27,7 @@ namespace InventorySystem.Application.Mapper
             //Category mapping
             CreateMap<CategoryCreateDto, Category>();
             CreateMap<Category, CategoryGetDto>();
-
+            //
             //Inventory Movement mapping
             CreateMap<InventoryMovementCreateDto,InventoryMovement>();
             CreateMap<InventoryMovement,InventoryMovementGetDto>();
