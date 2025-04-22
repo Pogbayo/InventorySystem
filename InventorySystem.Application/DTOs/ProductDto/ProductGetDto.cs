@@ -2,7 +2,7 @@
 
 namespace InventorySystem.Application.DTOs.ProductDto
 {
-    public class ProductDto
+    public class ProductGetDto
     {
         public Guid Id { get; set; }
 
