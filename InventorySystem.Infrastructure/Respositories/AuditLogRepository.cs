@@ -30,6 +30,11 @@ namespace InventorySystem.Infrastructure.Respositories
                 query = query.Where(al => al.Action.Contains(filter.SearchItem) || al.PerformedBy.ToString().Contains(filter.SearchItem));
             }
 
+            if (filter.lastUpdateTime.HasValue)
+            {
+                query = query.Where(al => al.CreatedAt > filter.lastUpdateTime.Value);
+            }
+
             if (filter.StartDate.HasValue)
             {
                 query = query.Where(al => al.CreatedAt >= filter.StartDate.Value);
@@ -46,6 +51,7 @@ namespace InventorySystem.Infrastructure.Respositories
             }
 
             var auditLogs = await query
+                .OrderBy(al => al.CreatedAt)
                 .Skip((filter.Page - 1) * filter.PageSize)
                 .Take(filter.PageSize)
                 .ToListAsync();

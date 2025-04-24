@@ -23,10 +23,15 @@ namespace InventorySystem.Infrastructure.Jwt_generator
 
         public string GenerateAccessToken(ApplicationUser user)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
             var claims = new[]
             {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Email, user.Email)
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
         };
 
             SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
