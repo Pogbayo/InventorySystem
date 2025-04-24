@@ -1,10 +1,13 @@
+using InventorySystem.Application.Interfaces.IRepositories;
+using InventorySystem.Application.Interfaces.IServices;
+using InventorySystem.Application.Services;
 using InventorySystem.Domain.Entities;
 using InventorySystem.Infrastructure.Jwt_generator;
 using InventorySystem.Infrastructure.Persistence;
+using InventorySystem.Infrastructure.Respositories;
 using InventorySystem.Infrastructure.SeedData;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,13 +25,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
+//AuthHelper
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
+//AuditLogHelper
+builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 
+//UserHelper
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
     .AddEntityFrameworkStores<InventorySystemDb>();
     //.AddDefaultTokenProviders();
 

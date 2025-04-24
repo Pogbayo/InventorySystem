@@ -19,6 +19,8 @@ namespace InventorySystem.Infrastructure.Jwt_generator
         {
             _jwtSettings = jwtOptions.Value;
         }
+
+
         public string GenerateAccessToken(ApplicationUser user)
         {
             var claims = new[]
@@ -40,6 +42,8 @@ namespace InventorySystem.Infrastructure.Jwt_generator
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        
 
         public string GenerateRefreshToken()
         {
