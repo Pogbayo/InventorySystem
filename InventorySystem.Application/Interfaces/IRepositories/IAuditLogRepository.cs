@@ -1,4 +1,4 @@
-﻿using InventorySystem.Application.Filter;
+﻿using InventorySystem.Application.Filter.AuditLogFilter;
 using InventorySystem.Domain.Entities;
 
 namespace InventorySystem.Application.Interfaces.IRepositories

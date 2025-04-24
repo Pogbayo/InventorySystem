@@ -1,5 +1,4 @@
-﻿
-namespace InventorySystem.Application.Filter
+﻿namespace InventorySystem.Application.Filter.AuditLogFilter
 {
     public class AuditLogFilter : BaseFilter
     {
