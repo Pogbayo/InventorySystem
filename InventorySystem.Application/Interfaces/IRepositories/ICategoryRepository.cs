@@ -1,6 +1,6 @@
 ﻿using InventorySystem.Application.DTOs.CategoryDto;
-using InventorySystem.Application.Filter;
 using InventorySystem.Application.Filter.CategoryFilter;
+using InventorySystem.Application.Filter.PagedResult;
 using InventorySystem.Domain.Entities;
 
 

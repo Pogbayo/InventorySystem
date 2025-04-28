@@ -1,5 +1,4 @@
-﻿
-namespace InventorySystem.Application.Filter
+﻿namespace InventorySystem.Application.Filter.PagedResult
 {
     public class PagedResult<T>
     {

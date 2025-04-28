@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using InventorySystem.Application.DTOs.CategoryDto;
-using InventorySystem.Application.Filter;
 using InventorySystem.Application.Filter.CategoryFilter;
+using InventorySystem.Application.Filter.PagedResult;
 using InventorySystem.Application.Interfaces.IRepositories;
 using InventorySystem.Application.Interfaces.IServices;
 using InventorySystem.Domain.Entities;
@@ -14,7 +14,7 @@ namespace InventorySystem.Application.Services
         private readonly IAuditLogRepository _auditLogRepository;
         private readonly CurrentUserService _currentuser;
         private readonly ICategoryRepository _categoryRepository;
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
         public CategoryService(IAuditLogRepository auditRepository, CurrentUserService currentuser, ICategoryRepository categoryRepository,IMapper mapper)
         {
             _auditLogRepository = auditRepository;
@@ -108,7 +108,7 @@ namespace InventorySystem.Application.Services
             var auditLog = new AuditLog(
                 action: $"Fetched categories",
                 performedBy: currentUserId,
-                details: $"Page: {filter.Page ?? 1}, Page size: {filter.PageSize ?? 10}, Total count: {pagedResult.TotalCount}"
+                details: $"Page: {filter.Page}, Page size: {filter.PageSize}, Total count: {pagedResult.TotalCount}"
             );
             await _auditLogRepository.AddLogAsync(auditLog);
             return pagedResult;

@@ -1,7 +1,7 @@
 ﻿using InventorySystem.Application.Filter.CategoryFilter;
-using InventorySystem.Application.Filter;
 using InventorySystem.Domain.Entities;
 using InventorySystem.Application.DTOs.CategoryDto;
+using InventorySystem.Application.Filter.PagedResult;
 
 namespace InventorySystem.Application.Interfaces.IServices
 {

@@ -1,5 +1,5 @@
-﻿using InventorySystem.Application.Filter;
-using InventorySystem.Application.Filter.CategoryFilter;
+﻿using InventorySystem.Application.Filter.CategoryFilter;
+using InventorySystem.Application.Filter.PagedResult;
 using InventorySystem.Application.Interfaces.IRepositories;
 using InventorySystem.Domain.Entities;
 using InventorySystem.Infrastructure.Persistence;
@@ -76,11 +76,14 @@ namespace InventorySystem.Infrastructure.Respositories
                 query = query.Where(c => c.Name.Contains(filter.Name));
             }
 
-            var pageNumber = filter.Page ?? 1;
-            var pageSize = filter.PageSize ?? 10;
+            var pageNumber = filter.Page < 1 ? 1 : filter.Page;
+            var pageSize = filter.PageSize < 1 ? 10 : filter.PageSize;
 
             var totalCount = await query.CountAsync();
-            var categories = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            var categories = await query
+                .Skip(( pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
             return new PagedResult<Category>
             {

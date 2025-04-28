@@ -18,7 +18,6 @@ public class InventoryMovement
     public int QuantityChanged { get; set; }
     public DateTime MovementDate { get; set; } = DateTime.UtcNow;
 
-
     public Product? Product { get; set; }
     public Warehouse? Warehouse { get; set; }
 

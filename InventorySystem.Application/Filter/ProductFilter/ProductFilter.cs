@@ -1,8 +1,8 @@
 ﻿using InventorySystem.Application.Filter.BaseFilter;
 
-namespace InventorySystem.Application.Filter.CategoryFilter
+namespace InventorySystem.Application.Filter.ProductFilter
 {
-    public class CategoryFilter : BaseFilterClass
+    public class ProductFilter : BaseFilterClass
     {
         public string? Name { get; set; }
     }

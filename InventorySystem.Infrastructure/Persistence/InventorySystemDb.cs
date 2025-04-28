@@ -3,12 +3,10 @@ using InventorySystem.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace InventorySystem.Infrastructure.Persistence
 {
-    public class InventorySystemDb : IdentityDbContext<ApplicationUser>
-
+    public class InventorySystemDb : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
         public InventorySystemDb(DbContextOptions<InventorySystemDb> options) : base(options) { }
 
