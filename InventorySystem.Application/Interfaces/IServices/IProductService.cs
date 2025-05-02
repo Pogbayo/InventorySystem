@@ -10,6 +10,7 @@ namespace InventorySystem.Application.Interfaces.IServices
     public interface IProductService
     {
         Task<ProductGetDto?> GetByIdAsync(Guid productId);
+        Task<ProductGetDto> GetByName(string name);
         Task<ProductGetDto?> CreateProductAsync(ProductCreateDto productcreatedto);
         Task<bool> UpdateAsync(Guid productId, Product updateData);
         Task<bool> DeleteAsync(Guid productId);

@@ -6,6 +6,7 @@ using InventorySystem.Application.Filter.ProductWarehouseFilter;
 using InventorySystem.Application.Interfaces.IRepositories;
 using InventorySystem.Application.Interfaces.IServices;
 using InventorySystem.Domain.Entities;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +43,7 @@ namespace InventorySystem.Application.Services
 
             var productWarehouseEntity = await _productWarehouseRepository.AddAsync(productWarehouse);
             var mappedProductWarehouse = _mapper.Map<ProductWarehouseGetDto>(productWarehouseEntity);
+
             var currentUserId = _currentuser.GetUserId();
 
             var auditLog = new AuditLog
@@ -106,29 +108,112 @@ namespace InventorySystem.Application.Services
             };
         }
 
-        public Task<ProductWarehouseGetDto?> GetByProductIdAndWarehouseIdAsync(Guid productId, Guid warehouseId)
+        public async Task<ProductWarehouseGetDto?> GetByProductIdAndWarehouseIdAsync(Guid productId, Guid warehouseId)
         {
-            throw new NotImplementedException();
+            if (warehouseId == Guid.Empty || productId == Guid.Empty)
+            {
+                throw new Exception("Invalid credentials");
+            }
+
+            var productWarehouse = await _productWarehouseRepository.GetByProductIdAndWarehouseIdAsync(productId, warehouseId);
+            if (productWarehouse == null)
+            {
+                return null;
+            }
+            var mappedProductWarehouse = _mapper.Map<ProductWarehouseGetDto>(productWarehouse);
+            var currentUserId = _currentuser.GetUserId();
+            var auditLog = new AuditLog(
+                action: $"Fetched a productWarehouse",
+                performedBy: currentUserId,
+                details: $"ProductWarehouse was fetched"
+            );
+            await _auditLogRepository.AddLogAsync(auditLog);
+            return mappedProductWarehouse;
         }
 
-        public Task<IEnumerable<ProductWarehouseGetDto?>> GetByProductIdAsync(Guid productId)
+        public async Task<IEnumerable<ProductWarehouseGetDto?>> GetByProductIdAsync(Guid productId)
         {
-            throw new NotImplementedException();
+            if (productId == Guid.Empty)
+            {
+                throw new Exception("Invalid product Id");
+            }
+
+            var productWarehouses = await _productWarehouseRepository.GetByWarehouseIdAsync(productId);
+            if (productWarehouses == null || !productWarehouses.Any())
+            {
+                throw new Exception("Product doesn't exist in any ProductWarehouse");
+            }
+
+            var mappedProductWarehouses = _mapper.Map<IEnumerable<ProductWarehouseGetDto>>(productWarehouses);
+            var currentUserId = _currentuser.GetUserId();
+            var auditLog = new AuditLog(
+                action: $"Fetched productWarehouses by products",
+                performedBy: currentUserId,
+                details: $"ProductWarehouses for product {productId} were fetched"
+            );
+            await _auditLogRepository.AddLogAsync(auditLog);
+            return mappedProductWarehouses;
         }
 
-        public Task<IEnumerable<ProductWarehouseGetDto?>> GetByWarehouseIdAsync(Guid warehouseId)
+        public async Task<IEnumerable<ProductWarehouseGetDto?>> GetByWarehouseIdAsync(Guid warehouseId)
         {
-            throw new NotImplementedException();
+            if (warehouseId == Guid.Empty)
+            {
+                throw new Exception("Invalid warehouse Id");
+            }
+
+            var productWarehouses = await _productWarehouseRepository.GetByWarehouseIdAsync(warehouseId);
+            if (productWarehouses == null || !productWarehouses.Any())
+            {
+                throw new Exception("WarehouseId doesn't exist in any ProductWarehouse");
+            }
+
+            var mappedProductWarehouses = _mapper.Map<IEnumerable<ProductWarehouseGetDto>>(productWarehouses);
+            var currentUserId = _currentuser.GetUserId();
+            var auditLog = new AuditLog(
+                action: $"Fetched productWarehouses by warehouse",
+                performedBy: currentUserId,
+                details: $"ProductWarehouses for warehouse {warehouseId} were fetched"
+            );
+            await _auditLogRepository.AddLogAsync(auditLog);
+            return mappedProductWarehouses;
         }
 
-        public Task<int?> GetProductQuantityAsync(Guid productId, Guid warehouseId)
+        public async Task<int?> GetProductQuantityAsync(Guid productId, Guid warehouseId)
         {
-            throw new NotImplementedException();
+            if (productId == Guid.Empty || warehouseId == Guid.Empty)
+            {
+                throw new Exception("Invalid product or warehouse Id");
+            }
+
+            var quantity = await _productWarehouseRepository.GetProductQuantityAsync(productId, warehouseId);
+            var currentUserId = _currentuser.GetUserId();
+            var auditLog = new AuditLog(
+                action: $"Fetched product quantity",
+                performedBy: currentUserId,
+                details: $"Product quantity for product {productId} in warehouse {warehouseId} was fetched"
+            );
+            await _auditLogRepository.AddLogAsync(auditLog);
+            return quantity;
         }
 
-        public Task<bool> UpdateAsync(Guid productId, Guid warehouseId, ProductWarehouse productWarehouse)
+        public async Task<bool> UpdateAsync(Guid productId, Guid warehouseId, ProductWarehouse productWarehouse)
         {
-            throw new NotImplementedException();
+            if (productId == Guid.Empty || warehouseId == Guid.Empty)
+            {
+                throw new Exception("Invalid product or warehouse Id");
+            }
+
+            var result = await _productWarehouseRepository.UpdateAsync(productId, warehouseId, productWarehouse);
+            var currentUserId = _currentuser.GetUserId();
+            var auditLog = new AuditLog(
+                action: $"Updated productWarehouse",
+                performedBy: currentUserId,
+                details: $"ProductWarehouse for product {productId} in warehouse {warehouseId} was updated"
+            );
+            await _auditLogRepository.AddLogAsync(auditLog);
+            return result;
         }
+
     }
 }

@@ -58,11 +58,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //AuthHelper
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<UserService>();
 
 //AuditLogHelper
 builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 
-//UserHelper
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 
 builder.Services.AddTransient<CurrentUserService>();
@@ -71,8 +76,24 @@ builder.Services.AddTransient<CurrentUserService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<ISupplierService, SupplierService>();
+
+builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
+builder.Services.AddScoped<IWarehouseService, WarehouseService>();
+
+
+builder.Services.AddScoped<IProductWarehouseRepository, ProductWarehouseRepository>();
+builder.Services.AddScoped<IProductWarehouseService, ProductWarehouseService>();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
+    .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<InventorySystemDb>();
     //.AddDefaultTokenProviders();
 
@@ -80,11 +101,15 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var dbContext = scope.ServiceProvider.GetService<InventorySystemDb>();
+    dbContext!.Database.EnsureCreated();
+
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
     await SeedData.SeedRolesAsync(roleManager);
 }
 
-// Configure the HTTP request pipeline.
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

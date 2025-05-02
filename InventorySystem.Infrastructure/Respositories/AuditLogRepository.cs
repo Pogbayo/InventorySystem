@@ -1,4 +1,5 @@
 ﻿using InventorySystem.Application.Filter.AuditLogFilter;
+using InventorySystem.Application.Filter.PagedResult;
 using InventorySystem.Application.Interfaces.IRepositories;
 using InventorySystem.Domain.Entities;
 using InventorySystem.Infrastructure.Persistence;
@@ -15,13 +16,14 @@ namespace InventorySystem.Infrastructure.Respositories
             _context = context;
         }
 
-        public async Task AddLogAsync(AuditLog log)
+        public async Task<bool> AddLogAsync(AuditLog log)
         {
             await _context.AuditLogs.AddAsync(log);
             await _context.SaveChangesAsync();
+            return true;
         }
 
-        public async Task<List<AuditLog>> GetPagedAuditLogsAsync(AuditLogFilter filter)
+        public async Task<PagedResult<AuditLog>> GetPagedAuditLogsAsync(AuditLogFilter filter)
         {
             var query = _context.AuditLogs.AsQueryable();
 
@@ -50,12 +52,20 @@ namespace InventorySystem.Infrastructure.Respositories
                 query = query.Where(al => al.Action == filter.Action);
             }
 
+            var totalCount = await query.CountAsync();
             var auditLogs = await query
-                .OrderBy(al => al.CreatedAt)
+                .OrderByDescending(al => al.CreatedAt)
                 .Skip((filter.Page - 1) * filter.PageSize)
                 .Take(filter.PageSize)
                 .ToListAsync();
-            return auditLogs;
+
+            return new PagedResult<AuditLog>
+            {
+                Data = auditLogs,
+                TotalCount = totalCount,
+                PageNumber = filter.Page,
+                PageSize = filter.PageSize
+            };
         }
     }
 }

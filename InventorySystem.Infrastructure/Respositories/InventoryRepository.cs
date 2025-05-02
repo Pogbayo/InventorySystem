@@ -29,7 +29,7 @@ namespace InventorySystem.Infrastructure.Respositories
             return inventorymovement;
         }
 
-        public async Task<PagedResult<InventoryMovement>>? GetPagedAsync(InventoryFilter filter)
+        public async Task<PagedResult<InventoryMovement>> GetPagedAsync(InventoryFilter filter)
         {
             var query = _context.InventoryMovements.AsQueryable();
 

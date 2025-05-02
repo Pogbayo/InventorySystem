@@ -36,6 +36,11 @@ namespace InventorySystem.Infrastructure.Respositories
             return await _context.Products.FindAsync(productId);
         }
 
+        public async Task<Product?> GetByName(string name)
+        {
+            return await _context.Products.FirstOrDefaultAsync(n=>n.Name==name);
+        }
+
         public async Task<PagedResult<Product>> GetPagedAsync(ProductFilter filter)
         {
             var query =  _context.Products.AsQueryable();

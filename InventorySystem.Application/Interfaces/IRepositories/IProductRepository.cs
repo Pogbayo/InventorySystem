@@ -8,6 +8,7 @@ namespace InventorySystem.Application.Interfaces.IRepositories
     {
         Task<Product?> GetByIdAsync(Guid productId);
         Task<Product?> CreateProductAsync(Product product);
+        Task<Product?> GetByName(string name);
         Task<bool> UpdateAsync(Guid productId,Product updateData);
         Task<bool> DeleteAsync(Guid productId);
         Task<PagedResult<Product>> GetPagedAsync(ProductFilter filter);

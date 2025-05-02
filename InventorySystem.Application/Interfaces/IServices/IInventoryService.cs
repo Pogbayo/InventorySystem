@@ -2,11 +2,12 @@
 using InventorySystem.Application.Filter.PagedResult;
 using InventorySystem.Domain.Entities;
 
-namespace InventorySystem.Application.Interfaces.IRepositories
+namespace InventorySystem.Application.Interfaces.IServices
 {
-    public interface IInventoryRepository
+    public interface IInventoryService
     {
-        Task<InventoryMovement?> AddInventoryMovementAsync(InventoryMovement inventorymovement);
+        Task<InventoryMovement?> AddInventoryMovementAsync(InventoryMovement inventoryMovement);
         Task<PagedResult<InventoryMovement>> GetPagedAsync(InventoryFilter filter);
+
     }
 }

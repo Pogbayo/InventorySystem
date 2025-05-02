@@ -88,7 +88,7 @@ namespace InventorySystem.Application.Services
 
             var auditLog = new AuditLog
             (
-              action: $"Fetched {product.Name}",
+              action: $"Fetched {product.Name} by id: {productId}",
               performedBy: currentUserId,
               details: $"{product.Name} was fetched"
             );
@@ -97,6 +97,30 @@ namespace InventorySystem.Application.Services
             return mappedProduct;
         }
 
+        public async Task<ProductGetDto> GetByName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new Exception("Please, provide a product name");
+            }
+            var product = await _productRepository.GetByName(name);
+            if (product == null)
+            {
+                throw new Exception("No product with the provided name exists");
+            }
+            var mappedProduct = _mapper.Map<ProductGetDto>(product);
+            var currentUserId = _currentuser.GetUserId();
+
+            var auditLog = new AuditLog
+           (
+             action: $"Fetched {product.Name}",
+             performedBy: currentUserId,
+             details: $"{product.Name} was fetched"
+           );
+
+            await _auditLogRepository.AddLogAsync(auditLog);
+            return mappedProduct;
+        }
 
         public async Task<PagedResult<ProductGetDto>>? GetPagedAsync(ProductFilter filter)
         {

@@ -5,14 +5,14 @@ namespace InventorySystem.Infrastructure.SeedData
 {
     public static class SeedData
     {
-        public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+        public static async Task SeedRolesAsync(RoleManager<IdentityRole<Guid>> roleManager)
         {
             string[] roleNames = { "Admin", "User", "Manager" };
             foreach (var rolename in roleNames)
             {
                 if (!await roleManager.RoleExistsAsync(rolename))
                 {
-                    await roleManager.CreateAsync(new IdentityRole(rolename));
+                    await roleManager.CreateAsync(new IdentityRole<Guid>(rolename));
                 }
             }
         }
