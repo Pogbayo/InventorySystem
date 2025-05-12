@@ -7,12 +7,7 @@ using InventorySystem.Application.Interfaces.IRepositories;
 using InventorySystem.Application.Interfaces.IServices;
 using InventorySystem.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace InventorySystem.Application.Services
 {
@@ -35,9 +30,22 @@ namespace InventorySystem.Application.Services
             _currentuser = currentuser;
         }
 
-        public Task<WarehouseGetDto?> CreateAsync(Warehouse warehouse)
+        public async Task<WarehouseGetDto?> CreateAsync(WarehouseCreateDto warehouse)
         {
-            throw new NotImplementedException();
+            if (warehouse == null)
+            {
+                throw new Exception("Please, provide warehouse details.");
+            }
+
+            var mappedWarehouseEntity = _mapper.Map<Warehouse>(warehouse);
+
+            var warehouseEntity = await _warehouseRepository.CreateWarehouseAsync(mappedWarehouseEntity);
+            if (warehouseEntity == null)
+            {
+                throw new Exception($"Warehouse with provided id: {warehouseEntity!.WarehouseId} does not exist");
+            }
+            var mappedWarehouse = _mapper.Map<WarehouseGetDto>(warehouseEntity);
+            return mappedWarehouse;
         }
 
         public async Task<bool> Deleteasync(Guid warehouseId)
@@ -47,7 +55,7 @@ namespace InventorySystem.Application.Services
             {
                 throw new Exception($"Warehouse with provided id: {warehouseId} does not exist");
             }
-            var result = await _warehouseRepository.Deleteasync(warehouseId);
+            var result = await _warehouseRepository.DeleteWarehouseAsync(warehouseId);
             if (result)
             {
                 var currentUserId = _currentuser.GetUserId();
@@ -99,7 +107,7 @@ namespace InventorySystem.Application.Services
             {
                 return null;
             }
-            var warehouse = await GetByIdAsync(warehouseId);
+            var warehouse = await _warehouseRepository.GetWarehouseByIdAsync(warehouseId);
             if (warehouse == null)
             {
                 return null;
@@ -107,7 +115,7 @@ namespace InventorySystem.Application.Services
             var currentUserId = _currentuser.GetUserId();
             var auditLog = new AuditLog
             (
-                action : $"Fetched warehouse by its id: {warehouse.Id}",
+                action : $"Fetched warehouse by its id: {warehouse.WarehouseId}",
                 performedBy : currentUserId,
                 details: $"{warehouse.Name} was fetched"
             );
@@ -122,7 +130,7 @@ namespace InventorySystem.Application.Services
             {
                 throw new Exception("Please, provide a product name");
             }
-            var warehouse = await _warehouseRepository.GetByName(name);
+            var warehouse = await _warehouseRepository.GetWarehouseByName(name);
             if (warehouse == null)
             {
                 throw new Exception("No warehouse with the provided name exists");
@@ -145,9 +153,9 @@ namespace InventorySystem.Application.Services
         {
             if (warehouseId == Guid.Empty || warehouseUpdate == null)
                 throw new Exception("Data error;");
-            var warehouse = await _warehouseRepository.GetByIdAsync(warehouseId);
+            var warehouse = await _warehouseRepository.GetWarehouseByIdAsync(warehouseId);
           
-            var result = await _warehouseRepository.UpdateAsync(warehouseId, warehouseUpdate);
+            var result = await _warehouseRepository.UpdateWarehouseAsync(warehouseId, warehouseUpdate);
             if (!result)
             {
                 return false;

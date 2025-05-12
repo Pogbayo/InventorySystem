@@ -21,29 +21,43 @@ namespace InventorySystem.Infrastructure.Jwt_generator
         }
 
 
-        public string GenerateAccessToken(ApplicationUser user)
+        public string GenerateAccessToken(ApplicationUser user, IList<string> roles)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
-        };
+            };
 
-            SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+
+            SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(_jwtSettings.Key));
             var key = symmetricSecurityKey;
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
-                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryInMinutes),
+                expires: DateTimeOffset.UtcNow.AddMinutes(_jwtSettings.ExpiryInMinutes).UtcDateTime,
                 claims: claims,
                 signingCredentials: creds);
+            Console.WriteLine($"ExpiryInMinutes that I set by myself: {_jwtSettings.ExpiryInMinutes}");
+
+
+            Console.WriteLine($"Current Time: {DateTime.UtcNow}");
+            Console.WriteLine($"Token Expiration Time (DateTime): {DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryInMinutes)}");
+            Console.WriteLine($"Token Expiration Time (Unix Timestamp): {token.Payload.Exp}");
+
+
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

@@ -2,7 +2,6 @@
 using InventorySystem.Application.Filter.PagedResult;
 using InventorySystem.Application.Interfaces.IRepositories;
 using InventorySystem.Domain.Entities;
-using InventorySystem.Infrastructure.Migrations;
 using InventorySystem.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 

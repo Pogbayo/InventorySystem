@@ -15,14 +15,14 @@ namespace InventorySystem.Infrastructure.Respositories
             _context = context;
         }
 
-        public async Task<Warehouse?> CreateProductAsync(Warehouse warehouse)
+        public async Task<Warehouse?> CreateWarehouseAsync(Warehouse warehouse)
         {
             await _context.Warehouses.AddAsync(warehouse);
             await _context.SaveChangesAsync();
             return warehouse;
         }
 
-        public async Task<bool> Deleteasync(Guid warehouseId)
+        public async Task<bool> DeleteWarehouseAsync(Guid warehouseId)
         {
             var warehouse = await _context.Warehouses.FindAsync(warehouseId);
             if (warehouse == null)
@@ -31,39 +31,41 @@ namespace InventorySystem.Infrastructure.Respositories
             return true;
         }
 
+
         public async Task<PagedResult<Warehouse>> GetAllAsync(BaseFilterClass filter)
         {
             var query = _context.Warehouses.AsQueryable();
             var pageNumber = filter.Page;
-            var pagesize = filter.PageSize;
+            var pageSize = filter.PageSize;
             var totalCount = await query.CountAsync();
             var warehouses = await query
-                .Skip((pageNumber - 1) * pagesize)
-                .Take(pagesize)
+                .OrderBy(w => w.WarehouseId) 
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
-
             return new PagedResult<Warehouse>
             {
                 Data = warehouses,
                 TotalCount = totalCount,
                 PageNumber = pageNumber,
-                PageSize = pagesize
+                PageSize = pageSize
             };
         }
 
-        public async Task<Warehouse?> GetByIdAsync(Guid warehouseId)
+
+        public async Task<Warehouse?> GetWarehouseByIdAsync(Guid warehouseId)
         {
             return await _context.Warehouses.FindAsync(warehouseId);
         }
 
-        public async Task<Warehouse?> GetByName(string name)
+        public async Task<Warehouse?> GetWarehouseByName(string name)
         {
             return await _context.Warehouses.FirstOrDefaultAsync(n=>n.Name==name);
         }
 
-        public async Task<bool> UpdateAsync(Guid warehouseId, Warehouse warehouseUpdate)
+        public async Task<bool> UpdateWarehouseAsync(Guid warehouseId, Warehouse warehouseUpdate)
         {
-            var warehouse = await GetByIdAsync(warehouseId);
+            var warehouse = await GetWarehouseByIdAsync(warehouseId);
             if (warehouse == null)
             {
                 throw new Exception("Warehouse not found");

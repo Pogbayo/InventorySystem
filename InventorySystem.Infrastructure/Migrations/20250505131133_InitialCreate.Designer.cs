@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventorySystem.Infrastructure.Migrations
 {
     [DbContext(typeof(InventorySystemDb))]
-    [Migration("20250422113542_SeedingProducts")]
-    partial class SeedingProducts
+    [Migration("20250505131133_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,84 @@ namespace InventorySystem.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("InventorySystem.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
 
             modelBuilder.Entity("InventorySystem.Domain.Entities.AuditLog", b =>
                 {
@@ -48,32 +126,6 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.HasKey("AuditLogId");
 
                     b.ToTable("AuditLogs");
-
-                    b.HasData(
-                        new
-                        {
-                            AuditLogId = new Guid("abcabc01-0000-0000-0000-000000000001"),
-                            Action = "Product Added",
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Details = "Product was added",
-                            PerformedBy = new Guid("11111111-1111-1111-1111-111111111111")
-                        },
-                        new
-                        {
-                            AuditLogId = new Guid("abcabc02-0000-0000-0000-000000000002"),
-                            Action = "Warehouse Created",
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Details = "Warehouse created",
-                            PerformedBy = new Guid("11111111-1111-1111-1111-111111111111")
-                        },
-                        new
-                        {
-                            AuditLogId = new Guid("abcabc03-0000-0000-0000-000000000003"),
-                            Action = "Inventory Movement",
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Details = "InventoryMovement recored",
-                            PerformedBy = new Guid("11111111-1111-1111-1111-111111111111")
-                        });
                 });
 
             modelBuilder.Entity("InventorySystem.Domain.Entities.Category", b =>
@@ -92,38 +144,6 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            CategoryId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Electronics"
-                        },
-                        new
-                        {
-                            CategoryId = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Books"
-                        },
-                        new
-                        {
-                            CategoryId = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Clothing"
-                        },
-                        new
-                        {
-                            CategoryId = new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"),
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Furniture"
-                        },
-                        new
-                        {
-                            CategoryId = new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Food"
-                        });
                 });
 
             modelBuilder.Entity("InventorySystem.Domain.Entities.InventoryMovement", b =>
@@ -135,9 +155,8 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.Property<DateTime>("MovementDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("MovementType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("MovementType")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
@@ -187,53 +206,6 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.HasIndex("SupplierId");
 
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            ProductId = new Guid("11111111-aaaa-aaaa-aaaa-111111111111"),
-                            CategoryId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Smartphone",
-                            Price = 499.99m,
-                            SupplierId = new Guid("1111aaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("22222222-bbbb-bbbb-bbbb-222222222222"),
-                            CategoryId = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Novel",
-                            Price = 19.99m,
-                            SupplierId = new Guid("2222bbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("33333333-cccc-cccc-cccc-333333333333"),
-                            CategoryId = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "T-shirt",
-                            Price = 15.99m,
-                            SupplierId = new Guid("3333cccc-cccc-cccc-cccc-cccccccccccc")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("44444444-dddd-dddd-dddd-444444444444"),
-                            CategoryId = new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"),
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Sofa",
-                            Price = 799.99m,
-                            SupplierId = new Guid("4444dddd-dddd-dddd-dddd-dddddddddddd")
-                        },
-                        new
-                        {
-                            ProductId = new Guid("55555555-eeee-eeee-eeee-555555555555"),
-                            CategoryId = new Guid("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
-                            CreatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Cereal",
-                            Price = 3.49m,
-                            SupplierId = new Guid("5555eeee-eeee-eeee-eeee-eeeeeeeeeeee")
-                        });
                 });
 
             modelBuilder.Entity("InventorySystem.Domain.Entities.ProductWarehouse", b =>
@@ -288,48 +260,6 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.HasKey("SupplierId");
 
                     b.ToTable("Suppliers");
-
-                    b.HasData(
-                        new
-                        {
-                            SupplierId = new Guid("1111aaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-                            Address = " 25, Okemagba Avenue, Agege, Lagos State",
-                            ContactEmail = "techsupplies@example.com",
-                            ContactInfo = "08012345678",
-                            Name = "Tech Supplies Co."
-                        },
-                        new
-                        {
-                            SupplierId = new Guid("2222bbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                            Address = " Ikeja City Mall, Abdulrazak Nwabude Drive",
-                            ContactEmail = "bookworld@example.com",
-                            ContactInfo = "08123456789",
-                            Name = "Book World"
-                        },
-                        new
-                        {
-                            SupplierId = new Guid("3333cccc-cccc-cccc-cccc-cccccccccccc"),
-                            Address = "10, Broad Street, Lagos Island",
-                            ContactEmail = "fashionhub@example.com",
-                            ContactInfo = "09012345678",
-                            Name = "Fashion Hub"
-                        },
-                        new
-                        {
-                            SupplierId = new Guid("4444dddd-dddd-dddd-dddd-dddddddddddd"),
-                            Address = "Km 19, Lekki-Epe Expressway, Lekki,",
-                            ContactEmail = "furnistore@example.com",
-                            ContactInfo = "08087654321",
-                            Name = "FurniStore"
-                        },
-                        new
-                        {
-                            SupplierId = new Guid("5555eeee-eeee-eeee-eeee-eeeeeeeeeeee"),
-                            Address = "21, Ibadan Street, Surulere,",
-                            ContactEmail = "grocerymart@example.com",
-                            ContactInfo = "08111223344",
-                            Name = "Grocery Mart"
-                        });
                 });
 
             modelBuilder.Entity("InventorySystem.Domain.Entities.Warehouse", b =>
@@ -350,6 +280,137 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.HasKey("WarehouseId");
 
                     b.ToTable("Warehouses");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("InventorySystem.Domain.Entities.InventoryMovement", b =>
@@ -407,6 +468,57 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+                {
+                    b.HasOne("InventorySystem.Domain.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+                {
+                    b.HasOne("InventorySystem.Domain.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InventorySystem.Domain.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+                {
+                    b.HasOne("InventorySystem.Domain.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("InventorySystem.Domain.Entities.Category", b =>

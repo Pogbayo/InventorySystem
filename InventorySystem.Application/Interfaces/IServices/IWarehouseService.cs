@@ -8,7 +8,7 @@ namespace InventorySystem.Application.Interfaces.IServices
 {
     public interface IWarehouseService
     {
-        Task<WarehouseGetDto?> CreateAsync(Warehouse warehouse);
+        Task<WarehouseGetDto?> CreateAsync(WarehouseCreateDto warehouse);
         Task<WarehouseGetDto?> GetByIdAsync(Guid warehouseId);
         Task<WarehouseGetDto?> GetByName(string name);
         Task<bool> UpdateAsync(Guid warehouseId, Warehouse warehouseUpdate);

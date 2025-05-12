@@ -21,8 +21,13 @@ namespace InventorySystem.Application.Mapper
 
             // For getting users (output to frontend)
             CreateMap<ApplicationUser, UserGetDto>()
-                           .ForMember(dest => dest.Roles, opt => opt.MapFrom((src, dest, _, context) =>
-                               context.Items.ContainsKey("RoleNames") ? context.Items["RoleNames"] : new List<string>()));
+           .ForMember(dest => dest.Roles, opt => opt.MapFrom((src, dest, _, context) =>
+               context.Items.TryGetValue("RoleNames", out var value) && value is List<string> roles
+                   ? roles
+                   : new List<string>()));
+
+
+
 
             //Category mapping
             CreateMap<CategoryCreateDto, Category>();
@@ -46,7 +51,12 @@ namespace InventorySystem.Application.Mapper
 
             //Warehouse
             CreateMap<WarehouseCreateDto, Warehouse>();
-            CreateMap<Warehouse, WarehouseGetDto>();
+            //CreateMap<Warehouse, WarehouseGetDto>();
+
+            CreateMap<Warehouse, WarehouseGetDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.WarehouseId));
+
+
         }
     }
 }

@@ -32,10 +32,10 @@ namespace InventorySystem.Infrastructure.Respositories
                 query = query.Where(al => al.Action.Contains(filter.SearchItem) || al.PerformedBy.ToString().Contains(filter.SearchItem));
             }
 
-            if (filter.lastUpdateTime.HasValue)
-            {
-                query = query.Where(al => al.CreatedAt > filter.lastUpdateTime.Value);
-            }
+            //if (filter.lastUpdateTime.HasValue)
+            //{
+            //    query = query.Where(al => al.CreatedAt > filter.lastUpdateTime.Value);
+            //}
 
             if (filter.StartDate.HasValue)
             {
