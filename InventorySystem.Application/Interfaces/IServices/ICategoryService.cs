@@ -12,6 +12,6 @@ namespace InventorySystem.Application.Interfaces.IServices
         Task<bool> DeleteCategoryAsync(Guid categoryId);
         Task<int> GetNumberOfProductsInCategoryAsync(Guid categoryId);
         Task<bool> UpdateCategoryAsync(Guid categoryId, Category updateData);
-        Task<PagedResult<Category>> GetPagedAsync(CategoryFilter filter);
+        Task<PagedResult<CategoryGetDto>> GetPagedAsync(CategoryFilter filter);
     }
 }

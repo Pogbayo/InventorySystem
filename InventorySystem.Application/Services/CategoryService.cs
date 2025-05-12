@@ -101,7 +101,7 @@ namespace InventorySystem.Application.Services
             return count;
         }
 
-        public async Task<PagedResult<Category>> GetPagedAsync(CategoryFilter filter)
+        public async Task<PagedResult<CategoryGetDto>> GetPagedAsync(CategoryFilter filter)
         {
             var pagedResult = await _categoryRepository.GetPagedAsync(filter);
             var currentUserId = _currentuser.GetUserId();
@@ -111,9 +111,16 @@ namespace InventorySystem.Application.Services
                 details: $"Page: {filter.Page}, Page size: {filter.PageSize}, Total count: {pagedResult.TotalCount}"
             );
             await _auditLogRepository.AddLogAsync(auditLog);
-            return pagedResult;
-        }
+            var mappedCategories = _mapper.Map<IEnumerable<CategoryGetDto>>(pagedResult.Data);
 
+            return new PagedResult<CategoryGetDto>
+            {
+                Data = mappedCategories.ToList(),
+                TotalCount = pagedResult.TotalCount,
+                PageNumber = pagedResult.PageNumber,
+                PageSize = pagedResult.PageSize
+            };
+        }
 
         public async Task<bool> UpdateCategoryAsync(Guid categoryId, Category updateData)
         {
