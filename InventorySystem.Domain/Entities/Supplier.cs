@@ -21,8 +21,9 @@ public class Supplier
 
     public Supplier() { }
 
-    public Supplier(string name,string contactInfo,string contactEmail,string address)
+    public Supplier(string name, string contactInfo, string contactEmail, string address)
     {
+        SupplierId = Guid.NewGuid();
         Name = name;
         ContactInfo = contactInfo;
         ContactEmail = contactEmail;

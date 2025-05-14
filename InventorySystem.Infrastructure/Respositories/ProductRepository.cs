@@ -17,10 +17,23 @@ namespace InventorySystem.Infrastructure.Respositories
 
         public async Task<Product?> CreateProductAsync(Product product)
         {
-            await _context.Products.AddAsync(product);
-            await _context.SaveChangesAsync();
-            return product;
+            try
+            {
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync();
+                return await _context.Products
+                       .Include(p => p.Category)
+                       .Include(p => p.Supplier)
+                       .FirstOrDefaultAsync(p => p.ProductId == product.ProductId);
+            }
+
+            catch (Exception ex)
+            {
+                throw new Exception($"Error saving product: {ex.Message}", ex);
+            }
         }
+
+
 
         public async Task<bool> DeleteAsync(Guid productId)
         {

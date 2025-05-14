@@ -60,79 +60,12 @@ builder.Services.AddDbContext<InventorySystemDb>(options =>
 builder.Services.AddHttpContextAccessor();
 
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
 
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddHttpContextAccessor();
 
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//   .AddJwtBearer(options =>
-//   {
-//       options.Events = new JwtBearerEvents
-//       {
-//           OnTokenValidated = context =>
-//           {
-//               Console.WriteLine("Token validated successfully");
-//               foreach (var claim in context.Principal!.Claims)
-//               {
-//                   Console.WriteLine($"Claim: {claim.Type} - {claim.Value}");
-//               }
-//               return Task.CompletedTask;
-//           },
-//           OnAuthenticationFailed = context =>
-//           {
-//               Console.WriteLine("Token validation failed");
-//               Console.WriteLine(context.Exception.Message);
-//               return Task.CompletedTask;
-//           },
-//           OnForbidden = context =>
-//           {
-//               Console.WriteLine("Forbidden: Access denied due to insufficient permissions");
-//               return Task.CompletedTask;
-//           }
-//       };
-//       options.TokenValidationParameters = new TokenValidationParameters
-//       {
-//           ValidateIssuerSigningKey = true,
-//           // Automatically grab the JwtSettings and apply it to the validation parameters
-//           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]!)),
-//           ValidateIssuer = true,
-//           ValidateAudience = true,
-//           RequireExpirationTime = true,
-//           ValidateLifetime = true,
-//           RoleClaimType = ClaimTypes.Role,
-//           NameClaimType = ClaimTypes.NameIdentifier,
-//           ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-//           ValidAudience = builder.Configuration["JwtSettings:Audience"],
-//           ClockSkew = TimeSpan.Zero,
-//       };
-//       options.Events = new JwtBearerEvents
-//       {
-//           OnTokenValidated = context =>
-//           {
-//               Console.WriteLine("Token validated successfully");
-//               foreach (var claim in context.Principal!.Claims)
-//               {
-//                   Console.WriteLine($"Claim: {claim.Type} - {claim.Value}");
-//               }
-//               return Task.CompletedTask;
-//           },
-//           OnAuthenticationFailed = context =>
-//           {
-//               Console.WriteLine("Token validation failed");
-//               Console.WriteLine(context.Exception.Message);
-//               return Task.CompletedTask;
-//           },
-//           OnForbidden = context =>
-//           {
-//               Console.WriteLine("Forbidden: Access denied due to insufficient permissions");
-//               return Task.CompletedTask;
-//           }
-//       };
-//   });
 
 //AuthHelper
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
@@ -145,12 +78,7 @@ builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-//var configuration = new MapperConfiguration(cfg =>
-//{
-//    cfg.AddProfile<MappingProfile>(); 
-//});
 
-//var mapper = configuration.CreateMapper();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
@@ -241,7 +169,6 @@ void LogUserClaims(IApplicationBuilder app)
     });
 }
 
-// In the main pipeline
 
 app.UseRouting();
 

@@ -19,7 +19,7 @@ namespace InventorySystem.Infrastructure.Respositories
         }
         public async Task<Supplier> CreateSupplierAsync(Supplier supplier)
         {
-             await _context.Suppliers.AddAsync(supplier);
+            await _context.Suppliers.AddAsync(supplier);
             await _context.SaveChangesAsync();
             return supplier;
         }

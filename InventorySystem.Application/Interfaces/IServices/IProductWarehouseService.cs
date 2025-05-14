@@ -11,8 +11,8 @@ namespace InventorySystem.Application.Interfaces.IServices
         Task<IEnumerable<ProductWarehouseGetDto?>> GetByWarehouseIdAsync(Guid warehouseId);
         Task<ProductWarehouseGetDto?> GetByProductIdAndWarehouseIdAsync(Guid productId, Guid warehouseId);
         Task<int?> GetProductQuantityAsync(Guid productId, Guid warehouseId);
-        Task<ProductWarehouseGetDto?> AddAsync(ProductWarehouse productWarehouse);
-        Task<bool> UpdateAsync(Guid productId, Guid warehouseId, ProductWarehouse productWarehouse);
+        Task<ProductWarehouseGetDto?> AddAsync(ProductWarehouseCreateDto productWarehouse);
+        Task<bool> UpdateAsync(Guid productId, Guid warehouseId, ProductWarehouseUpdateDto productWarehouseupdatedata);
         Task<PagedResult<ProductWarehouseGetDto>>? FindProductWarehousesAsync(ProductWarehouseFilter filter);
         Task<bool> DeleteAsync(Guid productId, Guid warehouseId);
     }

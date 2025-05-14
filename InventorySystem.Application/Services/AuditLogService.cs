@@ -3,11 +3,7 @@ using InventorySystem.Application.Filter.PagedResult;
 using InventorySystem.Application.Interfaces.IRepositories;
 using InventorySystem.Application.Interfaces.IServices;
 using InventorySystem.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace InventorySystem.Application.Services
 {

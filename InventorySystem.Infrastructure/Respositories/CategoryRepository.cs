@@ -50,21 +50,16 @@ namespace InventorySystem.Infrastructure.Respositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<bool> UpdateCategoryAsync(Guid categoryId, Category updateData)
+        public async Task<bool> UpdateCategoryAsync(Guid categoryId, Category categoryUpdate)
         {
-            var category = await GetByIdAsync(categoryId);
-            if (category == null) return false;
-
-            try
-            {
-                _context.Entry(category).CurrentValues.SetValues(updateData);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateException )
-            {
+            var existingCategory = await _context.Categories.FindAsync(categoryId);
+            if (existingCategory == null)
                 return false;
-            }
+
+            existingCategory.Name = categoryUpdate.Name;
+            
+
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<PagedResult<Category>> GetPagedAsync(CategoryFilter filter)

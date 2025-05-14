@@ -26,28 +26,51 @@ namespace InventorySystem.Application.Mapper
                    ? roles
                    : new List<string>()));
 
-
-
-
             //Category mapping
             CreateMap<CategoryCreateDto, Category>();
             CreateMap<Category, CategoryGetDto>();
-            //
+            CreateMap<CategoryUpdateDto, Category>()
+                 .ForMember(dest => dest.CategoryId, opt => opt.Ignore());
+
             //Inventory Movement mapping
             CreateMap<InventoryMovementCreateDto,InventoryMovement>();
             CreateMap<InventoryMovement,InventoryMovementGetDto>();
 
             //Product mapping
             CreateMap<ProductCreateDto, Product>();
-            CreateMap<Product, ProductGetDto>();
+
+            CreateMap<Product, ProductGetDto>()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ProductId))
+               .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : null))
+               .ForMember(dest => dest.SupplierName, opt => opt.MapFrom(src => src.Supplier != null ? src.Supplier.Name : null));
+
 
             //Supplier mapping
-            CreateMap<SupplierCreateDto, Supplier>();
-            CreateMap<Supplier,SupplierGetDto>();
+
+            CreateMap<SupplierCreateDto, Supplier>()
+                .ForMember(dest => dest.SupplierId, opt => opt.MapFrom(src => Guid.NewGuid()));
+
+            CreateMap<SupplierUpdateDto, Supplier>()
+               .ForMember(dest => dest.SupplierId, opt => opt.Ignore());
+            //.ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
+
+
+
+            CreateMap<Supplier, SupplierGetDto>()
+                .ForMember(dest => dest.SupplierId, opt => opt.MapFrom(src => src.SupplierId))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ContactInfo, opt => opt.MapFrom(src => src.ContactInfo))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+                .ForMember(dest => dest.ContactEmail, opt => opt.MapFrom(src => src.ContactEmail));
+
 
             //ProductWarehouse mapping
             CreateMap<ProductWarehouseCreateDto, ProductWarehouse>();
-            CreateMap<ProductWarehouse,ProductWarehouseGetDto>();
+            CreateMap<ProductWarehouse,ProductWarehouseGetDto>()
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest => dest.WarehouseName, opt => opt.MapFrom(src => src.Warehouse.Name));
+
+            CreateMap<ProductWarehouseUpdateDto,ProductWarehouse>();
 
             //Warehouse
             CreateMap<WarehouseCreateDto, Warehouse>();

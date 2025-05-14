@@ -20,6 +20,14 @@ namespace InventorySystem.Infrastructure.Respositories
         {
             await _context.ProductWarehouses.AddAsync(productWarehouse);
             await _context.SaveChangesAsync();
+            _context.Entry(productWarehouse)
+                   .Reference(pw => pw.Product)
+                   .Load();
+
+            _context.Entry(productWarehouse)
+                .Reference(pw => pw.Warehouse)
+                .Load();
+
             return productWarehouse;
         }
 
@@ -74,8 +82,10 @@ namespace InventorySystem.Infrastructure.Respositories
         public async Task<ProductWarehouse?> GetByProductIdAndWarehouseIdAsync(Guid productId, Guid warehouseId)
         {
             var productWarehouse = await _context.ProductWarehouses
-                            .Where(pw => pw.ProductId == productId && pw.WarehouseId == warehouseId)
-                            .FirstOrDefaultAsync();
+                         .Include(pw=>pw.Product)
+                             .Include(pw=>pw.Warehouse)
+                                 .Where(pw => pw.ProductId == productId && pw.WarehouseId == warehouseId)
+                                     .FirstOrDefaultAsync();
             if (productWarehouse == null)
             {
                 return null;
@@ -86,15 +96,21 @@ namespace InventorySystem.Infrastructure.Respositories
         public async Task<IEnumerable<ProductWarehouse>> GetByProductIdAsync(Guid productId)
         {
             return await _context.ProductWarehouses
-                             .Where(pw => pw.ProductId == productId )
-                                 .ToListAsync();
+                     .Include(pw => pw.Product)
+                       .Include(pw => pw.Warehouse)
+                          .Where(pw => pw.ProductId == productId)
+                             .ToListAsync();
+
         }
 
         public async Task<IEnumerable<ProductWarehouse>> GetByWarehouseIdAsync(Guid warehouseId)
         {
             return await _context.ProductWarehouses
-                                         .Where(pw => pw.ProductId == warehouseId)
-                                             .ToListAsync();
+                      .Include(pw => pw.Product)
+                         .Include(pw => pw.Warehouse)
+                            .Where(pw => pw.WarehouseId == warehouseId)
+                               .ToListAsync();
+
         }
 
         public async Task<int?> GetProductQuantityAsync(Guid productId, Guid warehouseId)
@@ -122,7 +138,7 @@ namespace InventorySystem.Infrastructure.Respositories
                 return false;
             }
 
-            _context.Entry(productWarehouse).CurrentValues.SetValues(productwarehouse);
+            productwarehouse.Quantity = productWarehouse.Quantity;
             await _context.SaveChangesAsync();
             return true;
         }

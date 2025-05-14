@@ -48,7 +48,7 @@ namespace InventorySystem.Application.Services
         public async Task<bool> DeleteCategoryAsync(Guid categoryId)
         {
             if (categoryId == Guid.Empty)
-                return false;
+                throw new Exception("Category with the provided ID does not exist");
             var category = await _categoryRepository.GetByIdAsync(categoryId);
             var result = await _categoryRepository.DeleteCategoryAsync(categoryId);
             var currentuserId = _currentuser.GetUserId();
@@ -63,8 +63,7 @@ namespace InventorySystem.Application.Services
                 
             await _auditLogRepository.AddLogAsync(auditLog);
             }
-
-            return false;
+            return result;
         }
 
         public async Task<CategoryGetDto?> GetByIdAsync(Guid categoryId)
@@ -122,22 +121,26 @@ namespace InventorySystem.Application.Services
             };
         }
 
-        public async Task<bool> UpdateCategoryAsync(Guid categoryId, Category updateData)
+        public async Task<bool> UpdateCategoryAsync(Guid categoryId, CategoryUpdateDto updateDto)
         {
             if (categoryId == Guid.Empty)
                 throw new ArgumentException("Category ID is required", nameof(categoryId));
 
-            var result = await _categoryRepository.UpdateCategoryAsync(categoryId, updateData);
+            var categoryEntity = _mapper.Map<Category>(updateDto);
+
+            var result = await _categoryRepository.UpdateCategoryAsync(categoryId, categoryEntity);
+
             if (result)
             {
                 var currentUserId = _currentuser.GetUserId();
                 var auditLog = new AuditLog(
                     action: $"Updated category",
                     performedBy: currentUserId,
-                    details: $"Category ID: {categoryId}, New name: {updateData.Name}"
+                    details: $"Category ID: {categoryId}, New name: {updateDto.Name}"
                 );
                 await _auditLogRepository.AddLogAsync(auditLog);
             }
+
             return result;
         }
 

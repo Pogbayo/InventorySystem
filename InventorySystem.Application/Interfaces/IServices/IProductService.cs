@@ -12,7 +12,7 @@ namespace InventorySystem.Application.Interfaces.IServices
         Task<ProductGetDto?> GetByIdAsync(Guid productId);
         Task<ProductGetDto> GetByName(string name);
         Task<ProductGetDto?> CreateProductAsync(ProductCreateDto productcreatedto);
-        Task<bool> UpdateAsync(Guid productId, Product updateData);
+        Task<bool> UpdateAsync(Guid productId, ProductCreateDto updateData);
         Task<bool> DeleteAsync(Guid productId);
         Task<PagedResult<ProductGetDto>>? GetPagedAsync(ProductFilter filter);
     }

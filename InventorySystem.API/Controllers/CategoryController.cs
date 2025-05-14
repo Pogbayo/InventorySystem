@@ -48,7 +48,7 @@ namespace InventorySystem.API.Controllers
             return OkResponse(category, "category fetched successfully.");
         }
 
-        [HttpGet("get-number-of-products-in-category-by id/{categoryId}")]
+        [HttpGet("get-products-count-in-category-by-id/{categoryId}")]
         [Authorize(Roles = "User")]
         public async Task<ActionResult<ApiResponse<int>>> GetNumberOfProductsInCategoryAsync(Guid categoryId)
         {
@@ -62,27 +62,30 @@ namespace InventorySystem.API.Controllers
 
         [HttpGet("get-all-categories")]
         [Authorize(Roles = "User")]
-        public async Task<ActionResult<ApiResponse<PagedResult<CategoryGetDto>>>> GetAllCategroies(CategoryFilter filter)
+        public async Task<ActionResult<ApiResponse<PagedResult<CategoryGetDto>>>> GetAllCategories([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string name)
         {
+            var filter = new CategoryFilter { Page = page, PageSize = pageSize, Name = name };
+
             var categories = await _categoryService.GetPagedAsync(filter);
-            if (categories != null)
+
+            if (categories == null || !categories.Data!.Any())
             {
                 return ErrorResponse("Category list is empty");
             }
-            return OkResponse(categories, "category list retreived successfully");
+            return OkResponse(categories, "Category list retrieved successfully");
         }
 
         [HttpPut("update-category-by-id/{categoryId}")]
         [Authorize(Roles = "User")]
-        public async Task<ActionResult<ApiResponse<bool>>> UpdateCategory(Guid categoryId, [FromBody]Category categoryUpdate)
+        public async Task<ActionResult<ApiResponse<bool>>> UpdateCategory(Guid categoryId, [FromBody] CategoryUpdateDto categoryUpdate)
         {
             var result = await _categoryService.UpdateCategoryAsync(categoryId, categoryUpdate);
             if (!result)
-            {
                 return ErrorResponse("Error updating category");
-            }
-            return OkResponse(result,"Category updated successfully.");
+
+            return OkResponse(result, "Category updated successfully.");
         }
+
 
         [HttpDelete("delete-category-by-id/{categoryId}")]
         [Authorize(Roles = "User")]
@@ -91,7 +94,7 @@ namespace InventorySystem.API.Controllers
             var result = await _categoryService.DeleteCategoryAsync(categoryId);
             if (!result)
             {
-                return ErrorResponse("Error deleting category");
+                return ErrorResponse(" Category not found");
             }
             return OkResponse(result, "Category deleted successfully.");
         }

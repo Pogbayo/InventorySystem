@@ -25,14 +25,16 @@ namespace InventorySystem.Application.Services
             _supplierRepository = supplierRepository;
         }
 
-        public async Task<SupplierGetDto?> CreateSupplierAsync(Supplier supplier)
+        public async Task<SupplierGetDto?> CreateSupplierAsync(SupplierCreateDto supplier)
         {
             if (supplier == null)
             {
                 throw new Exception("Invalid supplier details");
             }
+            var mappedSupplierCreate = _mapper.Map<Supplier>(supplier);
+            mappedSupplierCreate.SupplierId = Guid.NewGuid();
 
-            var supplierEntity = await _supplierRepository.CreateSupplierAsync(supplier);
+            var supplierEntity = await _supplierRepository.CreateSupplierAsync(mappedSupplierCreate);
             if (supplierEntity == null)
             {
                 return null;
@@ -86,20 +88,20 @@ namespace InventorySystem.Application.Services
                 PerformedBy = currentUserId,
                 Details = $"{supplierEntity.Name} was fetched"
             };
+
             await _auditLogRepository.AddLogAsync(auditLog);
             return mappedSupplierEntity;
         }
 
-        public async Task<bool> UpdateAsync(Guid supplierId, Supplier supplierUpdate)
+        public async Task<bool> UpdateAsync(Guid supplierId, SupplierUpdateDto supplierUpdate)
         {
             var supplierEntity = await _supplierRepository.GetByIdAsync(supplierId);
             if (supplierEntity == null)
             {
                 return false;
             }
-
-            var updatedSupplierEntity = await _supplierRepository.UpdateAsync(supplierId, supplierUpdate);
-            var mappedSupplierEntity = _mapper.Map<SupplierGetDto>(updatedSupplierEntity);
+            _mapper.Map(supplierUpdate, supplierEntity);
+            var updatedSupplierEntity = await _supplierRepository.UpdateAsync(supplierId, supplierEntity);
             var currentUserId = _currentuser.GetUserId();
             var auditLog = new AuditLog
             {

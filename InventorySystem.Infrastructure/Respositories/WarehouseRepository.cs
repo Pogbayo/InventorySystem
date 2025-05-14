@@ -28,6 +28,7 @@ namespace InventorySystem.Infrastructure.Respositories
             if (warehouse == null)
                 return false;
             _context.Warehouses.Remove(warehouse);
+            await _context.SaveChangesAsync();
             return true;
         }
 

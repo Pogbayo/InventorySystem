@@ -34,14 +34,17 @@ namespace InventorySystem.Application.Services
             _currentuser = currentuser;
             _productWarehouseRepository = productWarehouseRepository;
         }
-        public async Task<ProductWarehouseGetDto?> AddAsync(ProductWarehouse productWarehouse)
+        public async Task<ProductWarehouseGetDto?> AddAsync(ProductWarehouseCreateDto productWarehouse)
         {
             if (productWarehouse is null)
             {
                 return null;
             }
 
-            var productWarehouseEntity = await _productWarehouseRepository.AddAsync(productWarehouse);
+            var createDtoToEntity = _mapper.Map<ProductWarehouse>(productWarehouse);
+
+            var productWarehouseEntity = await _productWarehouseRepository.AddAsync(createDtoToEntity);
+
             var mappedProductWarehouse = _mapper.Map<ProductWarehouseGetDto>(productWarehouseEntity);
 
             var currentUserId = _currentuser.GetUserId();
@@ -138,7 +141,7 @@ namespace InventorySystem.Application.Services
                 throw new Exception("Invalid product Id");
             }
 
-            var productWarehouses = await _productWarehouseRepository.GetByWarehouseIdAsync(productId);
+            var productWarehouses = await _productWarehouseRepository.GetByProductIdAsync(productId);
             if (productWarehouses == null || !productWarehouses.Any())
             {
                 throw new Exception("Product doesn't exist in any ProductWarehouse");
@@ -197,14 +200,15 @@ namespace InventorySystem.Application.Services
             return quantity;
         }
 
-        public async Task<bool> UpdateAsync(Guid productId, Guid warehouseId, ProductWarehouse productWarehouse)
+        public async Task<bool> UpdateAsync(Guid productId, Guid warehouseId, ProductWarehouseUpdateDto productWarehouseupdatedata)
         {
             if (productId == Guid.Empty || warehouseId == Guid.Empty)
             {
                 throw new Exception("Invalid product or warehouse Id");
             }
+            var updateDtoToEntity = _mapper.Map<ProductWarehouse>(productWarehouseupdatedata);
 
-            var result = await _productWarehouseRepository.UpdateAsync(productId, warehouseId, productWarehouse);
+            var result = await _productWarehouseRepository.UpdateAsync(productId, warehouseId, updateDtoToEntity);
             var currentUserId = _currentuser.GetUserId();
             var auditLog = new AuditLog(
                 action: $"Updated productWarehouse",
@@ -212,6 +216,7 @@ namespace InventorySystem.Application.Services
                 details: $"ProductWarehouse for product {productId} in warehouse {warehouseId} was updated"
             );
             await _auditLogRepository.AddLogAsync(auditLog);
+
             return result;
         }
 

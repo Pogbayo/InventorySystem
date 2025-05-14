@@ -30,26 +30,47 @@ namespace InventorySystem.Application.Services
             _productRepository = productRepository;
         }
 
-        public async Task<ProductGetDto?> CreateProductAsync(ProductCreateDto productcreatedto)
+        public async Task<ProductGetDto?> CreateProductAsync(ProductCreateDto productcreateddto)
         {
-            if (productcreatedto == null)
+            if (productcreateddto == null)
             {
-                return null;
+                throw new Exception("Product data is null");
             }
-            var productEntity = _mapper.Map<Product>(productcreatedto);
-            var savedEntity = await _productRepository.CreateProductAsync(productEntity);
-            var mappedProduct = _mapper.Map<ProductGetDto>(savedEntity);
-            var currentUserId = _currentuser.GetUserId();
 
-            var auditLog = new AuditLog
-            (
-                action: $"Created {productEntity}",
-                performedBy: currentUserId,
-                details: $"{productEntity.Name} was created"
-            );
-            await _auditLogRepository.AddLogAsync(auditLog);
+            var productEntity = _mapper.Map<Product>(productcreateddto);
+            productEntity.ProductId = Guid.NewGuid();
+            productEntity.CreatedAt = DateTime.UtcNow;
+            
 
-            return mappedProduct;
+            try
+            {
+                var savedEntity = await _productRepository.CreateProductAsync(productEntity);
+                Console.WriteLine($"Category Name: {savedEntity?.Category?.Name}");
+                Console.WriteLine($"Supplier Name: {savedEntity?.Supplier?.Name}");
+
+
+                if (savedEntity == null)
+                {
+                    throw new Exception("Failed to save product");
+                }
+
+                var mappedProduct = _mapper.Map<ProductGetDto>(savedEntity);
+                var currentUserId = _currentuser.GetUserId();
+                var auditLog = new AuditLog(
+                    //auditLogId: Guid.NewGuid(),
+                    action: $"Created {productEntity}",
+                    performedBy: currentUserId,
+                    details: $"{productEntity.Name} was created"
+                    //createdAt: DateTime.UtcNow
+                );
+
+                await _auditLogRepository.AddLogAsync(auditLog);
+                return mappedProduct;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error creating product: {ex.Message}", ex);
+            }
         }
 
         public async Task<bool> DeleteAsync(Guid productId)
@@ -144,12 +165,17 @@ namespace InventorySystem.Application.Services
             };
         }
 
-        public async Task<bool> UpdateAsync(Guid productId, Product updateData)
+        public async Task<bool> UpdateAsync(Guid productId, ProductCreateDto updateData)
         {
             if (productId == Guid.Empty || updateData == null)
                 throw new Exception("Data error;");
 
-            var result = await _productRepository.UpdateAsync(productId, updateData);
+            var productEntity = await _productRepository.GetByIdAsync(productId);
+            if (productEntity == null)
+                throw new Exception("Product not found");
+
+            _mapper.Map(updateData, productEntity);
+            var result = await _productRepository.UpdateAsync(productId, productEntity);
             if (!result)
             {
                 return false;
@@ -163,5 +189,7 @@ namespace InventorySystem.Application.Services
             await _auditLogRepository.AddLogAsync(auditLog);
             return true;
         }
+
+
     }
 }
