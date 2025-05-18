@@ -149,11 +149,9 @@ using (var scope = app.Services.CreateScope())
     await SeedData.SeedRolesAsync(roleManager);
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    //app.UseSwagger();
+    //app.UseSwaggerUI();
+
 
 
 void LogUserClaims(IApplicationBuilder app)
@@ -173,10 +171,12 @@ void LogUserClaims(IApplicationBuilder app)
 app.UseRouting();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 LogUserClaims(app);
 
 app.MapControllers();
-
-app.Run();
+;

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,28 +7,26 @@ public class Product
 {
     public Guid ProductId { get; set; }
 
-    [Required]
-    [MaxLength(100)]
-    public string Name { get; set; } = default!;
+    [Length(3,100)]
+    public required string Name { get; set; } 
 
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal Price { get; set; }
+    //[Column(TypeName = "decimal(18,2)")]
+    [Precision(18,2)]
+    [Range(0,int.MaxValue)]
+    public required decimal Price { get; set; }
 
-    [Required]
-    public Guid CategoryId { get; set; }
-    [Required]
-    public Guid SupplierId { get; set; }
+    public required Guid CategoryId { get; set; }
+    public required Guid SupplierId { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public ICollection<ProductWarehouse>? ProductWarehouses { get; set; }
-    public ICollection<InventoryMovement>? InventoryMovement { get; set; }
+    public ICollection<ProductWarehouse> ProductWarehouses { get; set; } = [];
+    public ICollection<InventoryMovement> InventoryMovement { get; set; } = [];
 
-    [ForeignKey("CategoryId")]
+    [ForeignKey(nameof(CategoryId))]
     public Category Category { get; set; } = default!;
-    [ForeignKey("SupplierId")]
+    [ForeignKey(nameof(SupplierId))]
     public Supplier Supplier { get; set; } = default!;
-
 
     public Product() { }
 

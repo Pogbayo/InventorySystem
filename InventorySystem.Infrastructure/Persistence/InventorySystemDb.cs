@@ -10,7 +10,7 @@ namespace InventorySystem.Infrastructure.Persistence
     {
         public InventorySystemDb(DbContextOptions<InventorySystemDb> options) : base(options) { }
 
-        public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; } 
         public DbSet<Category> Categories { get; set; }
         public DbSet<InventoryMovement> InventoryMovements { get; set; }
         public DbSet<Product> Products { get; set; }

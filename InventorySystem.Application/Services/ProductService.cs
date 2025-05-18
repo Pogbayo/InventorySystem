@@ -131,7 +131,7 @@ namespace InventorySystem.Application.Services
             }
             var mappedProduct = _mapper.Map<ProductGetDto>(product);
             var currentUserId = _currentuser.GetUserId();
-
+            //Console.WriteLine("");
             var auditLog = new AuditLog
            (
              action: $"Fetched {product.Name}",

@@ -27,13 +27,11 @@ namespace InventorySystem.Infrastructure.Respositories
                        .FirstOrDefaultAsync(p => p.ProductId == product.ProductId);
             }
 
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
-                throw new Exception($"Error saving product: {ex.Message}", ex);
+                throw new DbUpdateException($"Error saving product: {ex.Message}", ex);
             }
         }
-
-
 
         public async Task<bool> DeleteAsync(Guid productId)
         {

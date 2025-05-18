@@ -34,7 +34,6 @@ namespace InventorySystem.API.Controllers
             }
         }
 
-
         [HttpGet("get-by-id/{productId}")]
         [Authorize(Roles = "User")]
         public async Task<ActionResult<ApiResponse<ProductGetDto>>> GetProductById(Guid productId)
