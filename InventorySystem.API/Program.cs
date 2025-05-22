@@ -14,12 +14,11 @@ using System.Text;
 using InventorySystem.Application.Mapper;
 using AutoMapper;
 using Microsoft.OpenApi.Models;
-using System.Security.Claims;
 using Microsoft.Extensions.Options;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Swagger setup
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -49,48 +48,33 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
 builder.Services.AddControllers();
-//builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
-//DbContext
+// DbContext
 builder.Services.AddDbContext<InventorySystemDb>(options =>
-       options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddHttpContextAccessor();
-
-
-builder.Services.AddEndpointsApiExplorer();
-
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddHttpContextAccessor();
 
-
-//AuthHelper
+// AuthHelper
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<UserService>();
 
-//AuditLogHelper
+// AuditLogHelper
 builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
-
-
-
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
-
-
 builder.Services.AddTransient<CurrentUserService>();
-
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
-builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
-builder.Services.AddScoped<IInventoryService, InventoryService>();
+//builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+//builder.Services.AddScoped<IInventoryService, InventoryService>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -107,9 +91,8 @@ builder.Services.AddScoped<IProductWarehouseService, ProductWarehouseService>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
     .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<InventorySystemDb>();
-//.AddDefaultTokenProviders();
 
-
+// Authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -129,16 +112,15 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
 var app = builder.Build();
 
+// Migrate database and seed roles
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<InventorySystemDb>();
-
     try
     {
-        dbContext.Database.Migrate(); 
+        dbContext.Database.Migrate();
     }
     catch (Exception ex)
     {
@@ -149,9 +131,16 @@ using (var scope = app.Services.CreateScope())
     await SeedData.SeedRolesAsync(roleManager);
 }
 
-    //app.UseSwagger();
-    //app.UseSwaggerUI();
-
+// Swagger in development mode
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Inventory System API");
+        options.DisplayRequestDuration();
+    });
+}
 
 
 void LogUserClaims(IApplicationBuilder app)
@@ -167,16 +156,12 @@ void LogUserClaims(IApplicationBuilder app)
     });
 }
 
-
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseSwagger();
-app.UseSwaggerUI();
-
 LogUserClaims(app);
 
 app.MapControllers();
-;
+app.Run();

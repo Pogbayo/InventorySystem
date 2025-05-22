@@ -4,11 +4,12 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<PlatformTarget>x86</PlatformTarget>
+		<PlatformTarget>x64</PlatformTarget>
+		<UserSecretsId>872d5b0a-8c33-4851-a428-a764368bed75</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+		<PackageReference Include="FluentValidation" Version="12.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.3.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
